@@ -32,9 +32,9 @@ module Gmail
         search = MAILBOX_ALIASES[args.shift].dup
         opts = args.first.is_a?(Hash) ? args.first : {}
 
-        opts[:after]      and search.concat ['SINCE', Net::IMAP.format_date(opts[:after])]
-        opts[:before]     and search.concat ['BEFORE', Net::IMAP.format_date(opts[:before])]
-        opts[:on]         and search.concat ['ON', Net::IMAP.format_date(opts[:on])]
+        opts[:after]      and search.concat ['SINCE', format_date(opts[:after])]
+        opts[:before]     and search.concat ['BEFORE', format_date(opts[:before])]
+        opts[:on]         and search.concat ['ON', format_date(opts[:on])]
         opts[:from]       and search.concat ['FROM', opts[:from]]
         opts[:to]         and search.concat ['TO', opts[:to]]
         opts[:subject]    and search.concat ['SUBJECT', opts[:subject]]
@@ -173,6 +173,11 @@ module Gmail
         yield(message) if block_given?
         message
       end
+    end
+
+    def format_date(maybe_date)
+        return Net::IMAP.format_date(maybe_date) if maybe_date.is_a?(Time)
+        maybe_date.to_s
     end
   end # Message
 end # Gmail
